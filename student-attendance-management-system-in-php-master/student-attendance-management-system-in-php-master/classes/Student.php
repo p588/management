@@ -29,12 +29,23 @@ class Student{
 		$name = mysqli_real_escape_string($this->db->link, $name);
 		$roll = mysqli_real_escape_string($this->db->link, $roll);
 
+		
 		if (empty($name) || empty($roll)) {
 			$msg = "<div class='alert alert-danger'><strong>Error !</strong> Field must not be empty !</div>";
 			return $msg;
 		} else {
-			$stu_query = "INSERT INTO tbl_student(name, roll) VALUES('$name', '$roll')";
-			$stu_insert = $this->db->insert($stu_query);
+			
+			$data=array('name'=>$name,'roll'=>$roll);
+		$options = array(
+	        'http' => array(
+	            'method' => 'POST',
+	            'content' => json_encode($data)
+	        )
+	    );
+			$az="https://nayana.azurewebsites.net/api/HttpTrigger1?code=Hc2zwklIbBppj2BjYL5EACDk_S0P-Ch7nfzetRbG-W0VAzFu7Bji3w==";
+	    $context = stream_context_create($options);
+	    $stu_insert = file_get_contents($az, false, $context);
+			
 
 			$att_query = "INSERT INTO tbl_attendance(roll) VALUES('$roll')";
 			$stu_insert = $this->db->insert($att_query);
